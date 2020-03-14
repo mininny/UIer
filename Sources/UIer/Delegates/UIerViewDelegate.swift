@@ -8,51 +8,44 @@
 import UIKit.UIView
 import ObjectiveC
 
-public enum UIerViewDelegateOptions {
-    case tap(numberOfTaps: Int?)
-}
-
-extension UIView {
-    private struct AssociatedKey {
-        static var delegate: UInt8 = 0
-    }
-
-    public var delegate: UIerViewDelegate? {
-        get {
-            return getAssociatedObject(object: self, associativeKey: &AssociatedKey.delegate)
-        }
-
-        set {
-            if let value = newValue {
-                setAssociatedObject(object: self, value: value, associativeKey: &AssociatedKey.delegate, policy: objc_AssociationPolicy.OBJC_ASSOCIATION_RETAIN_NONATOMIC)
-            }
-        }
-    }
-
-    public func setDelegateOptions(with options: [UIerViewDelegateOptions]) {
-        for option in options {
-            switch option {
-            case .tap(let numberOfTaps):
-                let tapGestureRecognizer = UITapGestureRecognizer(target: UIView.UIerController, action: #selector(UIView.UIerController.didTapView))
-                tapGestureRecognizer.numberOfTapsRequired = numberOfTaps ?? 1
-                self.addGestureRecognizer(tapGestureRecognizer)
-            }
-        }
-    }
-}
-
-fileprivate extension UIView {
-    static let UIerController = UIerView()
-}
-
-class UIerView {
-    @objc func didTapView(_ sender: UITapGestureRecognizer) {
-        if let view = sender.view, let delegate = view.delegate {
-            delegate.didTapView(view)
-        }
-    }
-}
-
 public protocol UIerViewDelegate {
-    func didTapView(_ view: UIView)
+    func didTap(_ view: UIView, recognizer: UITapGestureRecognizer)
+    
+    func didLongPress(_ view: UIView, recognizer: UILongPressGestureRecognizer)
+    
+    func didPan(_ view: UIView, recognizer: UIPanGestureRecognizer)
+    
+    @available(iOS 13.0, *)
+    func didHover(_ view: UIView, recognizer: UIHoverGestureRecognizer)
+    
+    func didSwipe(_ view: UIView, recognizer: UISwipeGestureRecognizer)
+    
+    func didRotate(_ view: UIView, recognizer: UIRotationGestureRecognizer)
+    
+    func didPinch(_ view: UIView, recognizer: UIPinchGestureRecognizer)
+    
+    func didScreenEdgePan(_ view: UIView, recognizer: UIScreenEdgePanGestureRecognizer)
+    
+    func didRecognizeGesture(_ view: UIView, recognizer: UIGestureRecognizer)
+}
+
+public extension UIerViewDelegate {
+    func didTap(_ view: UIView, recognizer: UITapGestureRecognizer) { }
+    
+    func didLongPress(_ view: UIView, recognizer: UILongPressGestureRecognizer) { }
+    
+    func didPan(_ view: UIView, recognizer: UIPanGestureRecognizer) { }
+ 
+    @available(iOS 13.0, *)
+    func didHover(_ view: UIView, recognizer: UIHoverGestureRecognizer) { }
+    
+    func didSwipe(_ view: UIView, recognizer: UISwipeGestureRecognizer) { }
+    
+    func didRotate(_ view: UIView, recognizer: UIRotationGestureRecognizer) { }
+    
+    func didPinch(_ view: UIView, recognizer: UIPinchGestureRecognizer) { }
+    
+    func didScreenEdgePan(_ view: UIView, recognizer: UIScreenEdgePanGestureRecognizer) { }
+    
+    func didRecognizeGesture(_ view: UIView, recognizer: UIGestureRecognizer) { }
 }

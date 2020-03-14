@@ -19,12 +19,7 @@ private func lift<T>(x: T) -> Lifted<T>  {
 }
 
 func setAssociatedObject<T>(object: AnyObject, value: T, associativeKey: UnsafeRawPointer, policy: objc_AssociationPolicy) {
-    if let v: AnyObject = value as? AnyObject {
-        objc_setAssociatedObject(object, associativeKey, v,  policy)
-    }
-    else {
-        objc_setAssociatedObject(object, associativeKey, lift(x: value),  policy)
-    }
+    objc_setAssociatedObject(object, associativeKey, value,  policy)
 }
 
 func getAssociatedObject<T>(object: AnyObject, associativeKey: UnsafeRawPointer) -> T? {

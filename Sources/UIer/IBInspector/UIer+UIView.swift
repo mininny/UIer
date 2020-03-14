@@ -1,8 +1,16 @@
+//
+//  UIer+UIView.swift
+//
+//
+//  Created by Minhyuk Kim on 2020/03/14.
+//
+
+
 import UIKit
 
 public extension UIView {
     @IBInspectable
-    public var cornerRadius: CGFloat
+    var cornerRadius: CGFloat
     {
         set (radius) {
             self.layer.cornerRadius = radius
@@ -16,7 +24,7 @@ public extension UIView {
 
     
     @IBInspectable
-    public var borderWidth: CGFloat
+    var borderWidth: CGFloat
     {
         set (width) {
             self.layer.borderWidth = width
@@ -28,7 +36,7 @@ public extension UIView {
     }
     
     @IBInspectable
-    public var borderColor: UIColor
+    var borderColor: UIColor
     {
         set (color) {
             self.layer.borderColor = color.cgColor
@@ -42,7 +50,7 @@ public extension UIView {
 
     
     @IBInspectable
-    public var bgHexColor: String?
+    var bgHexColor: String?
     {
         set (hexString) {
             guard let str = hexString else { return }
