@@ -1,6 +1,6 @@
 import UIKit
 
-extension UIView {
+public extension UIView {
     @IBInspectable
     public var cornerRadius: CGFloat
     {

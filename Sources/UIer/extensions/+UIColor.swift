@@ -8,7 +8,7 @@
 import UIKit.UIColor
 
 extension UIColor {
-    static func hexStringToUIColor (hex:String) -> UIColor {
+    public static func hexStringToUIColor (hex:String) -> UIColor {
         var cString:String = hex.trimmingCharacters(in: .whitespacesAndNewlines).uppercased()
 
         if (cString.hasPrefix("#")) {
@@ -30,7 +30,7 @@ extension UIColor {
         )
     }
     
-    func toHexString() -> String {
+    public func toHexString() -> String {
         var r:CGFloat = 0
         var g:CGFloat = 0
         var b:CGFloat = 0

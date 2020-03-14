@@ -8,7 +8,7 @@
 import UIKit.UIView
 import ObjectiveC
 
-enum UIerViewDelegateOptions {
+public enum UIerViewDelegateOptions {
     case tap(numberOfTaps: Int?)
 }
 
@@ -17,7 +17,7 @@ extension UIView {
         static var delegate: UInt8 = 0
     }
 
-    var delegate: UIerViewDelegate? {
+    public var delegate: UIerViewDelegate? {
         get {
             return getAssociatedObject(object: self, associativeKey: &AssociatedKey.delegate)
         }
@@ -29,7 +29,7 @@ extension UIView {
         }
     }
 
-    func setDelegateOptions(with options: [UIerViewDelegateOptions]) {
+    public func setDelegateOptions(with options: [UIerViewDelegateOptions]) {
         for option in options {
             switch option {
             case .tap(let numberOfTaps):
@@ -53,6 +53,6 @@ class UIerView {
     }
 }
 
-protocol UIerViewDelegate {
+public protocol UIerViewDelegate {
     func didTapView(_ view: UIView)
 }
