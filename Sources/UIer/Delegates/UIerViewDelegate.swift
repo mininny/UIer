@@ -33,7 +33,7 @@ extension UIView {
         for option in options {
             switch option {
             case .tap(let numberOfTaps):
-                let tapGestureRecognizer = UITapGestureRecognizer(target: nil, action: #selector(UIView.UIerController.didTapView(sender:)))
+                let tapGestureRecognizer = UITapGestureRecognizer(target: UIView.UIerController, action: #selector(UIView.UIerController.didTapView))
                 tapGestureRecognizer.numberOfTapsRequired = numberOfTaps ?? 1
                 self.addGestureRecognizer(tapGestureRecognizer)
             }
@@ -46,7 +46,7 @@ fileprivate extension UIView {
 }
 
 class UIerView {
-    @objc func didTapView(sender: UITapGestureRecognizer) {
+    @objc func didTapView(_ sender: UITapGestureRecognizer) {
         if let view = sender.view, let delegate = view.delegate {
             delegate.didTapView(view)
         }
