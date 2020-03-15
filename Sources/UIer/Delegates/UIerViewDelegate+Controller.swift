@@ -9,15 +9,15 @@ import UIKit.UIView
 
 extension UIView {
     private struct AssociatedKey {
-        static var uierDelegate: UInt8 = 0
-        static var uierController: UInt8 = 1
+        static var uierDelegate = "uierDelegateKey"
+        static var uierController = "uierControllerKey"
     }
-
+    
     var uierDelegate: UIerViewDelegate? {
         get {
             return getAssociatedObject(object: self, associativeKey: &AssociatedKey.uierDelegate)
         }
-
+        
         set {
             if let value = newValue {
                 setAssociatedObject(object: self, value: value, associativeKey: &AssociatedKey.uierDelegate, policy: objc_AssociationPolicy.OBJC_ASSOCIATION_RETAIN_NONATOMIC)
@@ -26,15 +26,15 @@ extension UIView {
     }
     
     var uierController: UIerController {
-         get {
+        get {
             return getAssociatedObject(object: self, associativeKey: &AssociatedKey.uierController) ?? .main
-         }
-
-         set {
+        }
+        
+        set {
             setAssociatedObject(object: self, value: newValue, associativeKey: &AssociatedKey.uierController, policy: objc_AssociationPolicy.OBJC_ASSOCIATION_RETAIN_NONATOMIC)
-         }
-     }
-
+        }
+    }
+    
     @discardableResult
     public func registerUIerDelegate(_ delegate: UIerViewDelegate, identifier: String? = nil) -> UIerController {
         if let identifier = identifier {
@@ -51,44 +51,67 @@ extension UIView {
     
     public func setUIerActions(with options: [UIerViewDelegateActions]) {
         for option in options {
-            switch option {
-            case .tap(let numberOfTaps):
-                let tapGestureRecognizer = UITapGestureRecognizer(target: self.uierController, action: #selector(self.uierController.didRecognizeGesture))
-                tapGestureRecognizer.numberOfTapsRequired = numberOfTaps
-                self.addGestureRecognizer(tapGestureRecognizer)
-            case .longPress(let minimumPressDuration, let numberOfTouches, let allowableMovement):
-                let longPressGestureRecognizer = UILongPressGestureRecognizer(target: self.uierController, action: #selector(self.uierController.didRecognizeGesture))
-                longPressGestureRecognizer.minimumPressDuration = minimumPressDuration
-                longPressGestureRecognizer.numberOfTouchesRequired = numberOfTouches
-                longPressGestureRecognizer.allowableMovement = allowableMovement
-                self.addGestureRecognizer(longPressGestureRecognizer)
-            case .pan(let maxTouch, let minTouch):
-                let panGestureRecognizer = UIPanGestureRecognizer(target: self.uierController, action: #selector(self.uierController.didRecognizeGesture))
-                panGestureRecognizer.maximumNumberOfTouches = maxTouch
-                panGestureRecognizer.minimumNumberOfTouches = minTouch
-                self.addGestureRecognizer(panGestureRecognizer)
-            case .hover:
-                if #available(iOS 13.0, *){
-                    let hoverGestureRecognizer = UIHoverGestureRecognizer(target: self.uierController, action: #selector(self.uierController.didRecognizeGesture))
-                    self.addGestureRecognizer(hoverGestureRecognizer)
-                }
-            case .swipe(let direction, let numberOfTouches):
-                let swipeGestureRecognizer = UISwipeGestureRecognizer(target: self.uierController, action: #selector(self.uierController.didRecognizeGesture))
-                swipeGestureRecognizer.direction = direction
-                swipeGestureRecognizer.numberOfTouchesRequired = numberOfTouches
-                self.addGestureRecognizer(swipeGestureRecognizer)
-            case .rotation:
-                let rotationGestureRecognizer = UIRotationGestureRecognizer(target: self.uierController, action: #selector(self.uierController.didRecognizeGesture))
-                self.addGestureRecognizer(rotationGestureRecognizer)
-            case .pinch:
-                let pinchGestureRecognizer = UIPinchGestureRecognizer(target: self.uierController, action: #selector(self.uierController.didRecognizeGesture))
-                self.addGestureRecognizer(pinchGestureRecognizer)
-            case .screenEdgePan(let edges):
-                let screenEdgePanGestureRecognizer = UIScreenEdgePanGestureRecognizer(target: self.uierController, action: #selector(self.uierController.didRecognizeGesture))
-                screenEdgePanGestureRecognizer.edges = edges
-                self.addGestureRecognizer(screenEdgePanGestureRecognizer)
-            }
+            self.addGestureRecognizer(with: option, action: #selector(self.uierController.didRecognizeGesture))
         }
+    }
+    
+    public func addUIerAction(with option: UIerViewDelegateActions, action: @escaping ((_ sender: Any)->Void)) {
+        let gestureRecognizer = self.addGestureRecognizer(with: option, action: #selector(self.uierController.didRecognizeGesture))
+        gestureRecognizer?.registerAction(with: action)
+    }
+    
+    private func registerGestureRecognizer(_ gestureRecognizer: UIGestureRecognizer) -> UIGestureRecognizer{
+        self.addGestureRecognizer(gestureRecognizer)
+        return gestureRecognizer
+    }
+    
+    @discardableResult
+    private func addGestureRecognizer(with option: UIerViewDelegateActions, action: Selector? = nil) -> UIGestureRecognizer? {
+        switch option {
+        case .tap(let numberOfTaps):
+            let tapGestureRecognizer = UITapGestureRecognizer(target: self.uierController, action: action)
+            tapGestureRecognizer.numberOfTapsRequired = numberOfTaps
+            return self.registerGestureRecognizer(tapGestureRecognizer)
+            
+        case .longPress(let minimumPressDuration, let numberOfTouches, let allowableMovement):
+            let longPressGestureRecognizer = UILongPressGestureRecognizer(target: self.uierController, action: action)
+            longPressGestureRecognizer.minimumPressDuration = minimumPressDuration
+            longPressGestureRecognizer.numberOfTouchesRequired = numberOfTouches
+            longPressGestureRecognizer.allowableMovement = allowableMovement
+            return self.registerGestureRecognizer(longPressGestureRecognizer)
+            
+        case .pan(let maxTouch, let minTouch):
+            let panGestureRecognizer = UIPanGestureRecognizer(target: self.uierController, action: action)
+            panGestureRecognizer.maximumNumberOfTouches = maxTouch
+            panGestureRecognizer.minimumNumberOfTouches = minTouch
+            return self.registerGestureRecognizer(panGestureRecognizer)
+            
+        case .hover:
+            if #available(iOS 13.0, *){
+                let hoverGestureRecognizer = UIHoverGestureRecognizer(target: self.uierController, action: action)
+                return self.registerGestureRecognizer(hoverGestureRecognizer)
+            }
+            
+        case .swipe(let direction, let numberOfTouches):
+            let swipeGestureRecognizer = UISwipeGestureRecognizer(target: self.uierController, action:action)
+            swipeGestureRecognizer.direction = direction
+            swipeGestureRecognizer.numberOfTouchesRequired = numberOfTouches
+            return self.registerGestureRecognizer(swipeGestureRecognizer)
+            
+        case .rotation:
+            let rotationGestureRecognizer = UIRotationGestureRecognizer(target: self.uierController, action: action)
+            return self.registerGestureRecognizer(rotationGestureRecognizer)
+            
+        case .pinch:
+            let pinchGestureRecognizer = UIPinchGestureRecognizer(target: self.uierController, action: action)
+            return self.registerGestureRecognizer(pinchGestureRecognizer)
+            
+        case .screenEdgePan(let edges):
+            let screenEdgePanGestureRecognizer = UIScreenEdgePanGestureRecognizer(target: self.uierController, action: action)
+            screenEdgePanGestureRecognizer.edges = edges
+            return self.registerGestureRecognizer(screenEdgePanGestureRecognizer)
+        }
+        return nil
     }
 }
 
