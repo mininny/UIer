@@ -37,11 +37,7 @@ extension UIView {
     
     @discardableResult
     public func registerUIerDelegate(_ delegate: UIerViewDelegate, identifier: String? = nil) -> UIerController {
-        if let identifier = identifier {
-            self.uierController = UIerController(identifier: identifier)
-        } else {
-            self.uierController = .main
-        }
+        self.uierController = UIerController.controller(for: identifier)
         
         self.uierDelegate = delegate
         self.uierController.addView(self)

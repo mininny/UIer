@@ -7,17 +7,32 @@
 
 import UIKit.UIView
 
-public class UIerController {
+public class UIerController: NSObject {
     static let main = UIerController(identifier: "UIer.UIerController.main")
+    static private var controllers: [String: WeakObject<UIerController>] = [:]
     
     let identifier: String
     var views = WeakObjectSet<UIView>()
     
-    init(identifier: String) {
+    private init(identifier: String) {
         self.identifier = identifier
+        super.init()
     }
     
-    func addView(_ view: UIView) {
+    static func controller(for identifier: String?) -> UIerController {
+        guard let identifier = identifier else { return .main }
+        
+        if let controller = self.controllers[identifier]?.object {
+            return controller
+        } else {
+            let controller = UIerController(identifier: identifier)
+            UIerController.controllers[identifier] = WeakObject(object: controller)
+            
+            return controller
+        }
+    }
+    
+    public func addView(_ view: UIView) {
         if !views.contains(view) {
             self.views.addObject(view)
         }
